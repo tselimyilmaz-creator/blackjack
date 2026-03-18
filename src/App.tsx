@@ -26,6 +26,7 @@ function App() {
       setPlaying(true)
     }
   }
+
   return (
     <BrowserRouter>
       <div className="min-h-dvh">
@@ -42,9 +43,7 @@ function App() {
                 <div className="hidden items-center gap-2 rounded-md border border-gold/20 bg-black/40 px-3 py-1.5 text-xs text-gray-200 sm:flex">
                   <span className="text-gold">{player.username}</span>
                   <span className="text-gray-400">•</span>
-                  <span>
-                    ${player.balance.toLocaleString()} chips
-                  </span>
+                  <span>${player.balance.toLocaleString()} chips</span>
                 </div>
               ) : null}
               <Link
@@ -71,27 +70,28 @@ function App() {
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </main>
+
+        <button
+          onClick={toggleMusic}
+          style={{
+            position: 'fixed',
+            bottom: '24px',
+            right: '24px',
+            background: '#C9A84C',
+            border: 'none',
+            borderRadius: '50%',
+            width: '48px',
+            height: '48px',
+            fontSize: '22px',
+            cursor: 'pointer',
+            zIndex: 999
+          }}
+        >
+          {playing ? '🔊' : '🔇'}
+        </button>
       </div>
     </BrowserRouter>
   )
-  <button
-        onClick={toggleMusic}
-        style={{
-          position: 'fixed',
-          bottom: '24px',
-          right: '24px',
-          background: '#C9A84C',
-          border: 'none',
-          borderRadius: '50%',
-          width: '48px',
-          height: '48px',
-          fontSize: '22px',
-          cursor: 'pointer',
-          zIndex: 999
-        }}
-      >
-        {playing ? '🔊' : '🔇'}
-      </button>
 }
 
 function Landing() {
@@ -168,3 +168,4 @@ function Landing() {
 }
 
 export default App
+// sigma pornocu batuhan
