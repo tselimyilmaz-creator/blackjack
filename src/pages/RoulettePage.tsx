@@ -1,9 +1,9 @@
-import { useEffect, useRef, useState } from 'react'
-import { BrowserRouter, Link, Navigate, Route, Routes } from 'react-router-dom'
-import { usePlayer } from './hooks/usePlayer'
-import { GamePage } from './pages/GamePage'
-import { LeaderboardPage } from './pages/LeaderboardPage'
-import { RoulettePage } from './pages/RoulettePage'
+import { useState } from 'react'
+import { Navigate } from 'react-router-dom'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { usePlayer } from '../hooks/usePlayer'
+import { supabase } from '../lib/supabase'
+import type { PlayerRow } from '../lib/types'
 
 function App() {
   const { player } = usePlayer()
