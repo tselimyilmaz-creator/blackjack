@@ -31,7 +31,7 @@ function App() {
   return (
     <BrowserRouter>
       <div className="min-h-dvh" style={{
-  backgroundImage: 'url(/bg-america.jpg)',
+  backgroundImage: 'url(/bg-america.png)',
   backgroundSize: 'cover',
   backgroundPosition: 'center',
   backgroundAttachment: 'fixed'
