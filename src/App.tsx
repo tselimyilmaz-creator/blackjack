@@ -3,6 +3,7 @@ import { BrowserRouter, Link, Navigate, Route, Routes } from 'react-router-dom'
 import { usePlayer } from './hooks/usePlayer'
 import { GamePage } from './pages/GamePage'
 import { LeaderboardPage } from './pages/LeaderboardPage'
+import { RoulettePage } from './pages/RoulettePage'
 
 function App() {
   const { player } = usePlayer()
@@ -53,6 +54,12 @@ function App() {
                 Table
               </Link>
               <Link
+                to="/roulette"
+                className="rounded-md border border-gold/30 px-3 py-1.5 text-gray-100 hover:bg-white/5"
+              >
+                Roulette
+              </Link>
+              <Link
                 to="/leaderboard"
                 className="rounded-md border border-gold/30 px-3 py-1.5 text-gray-100 hover:bg-white/5"
               >
@@ -66,6 +73,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Landing />} />
             <Route path="/game" element={<GamePage />} />
+            <Route path="/roulette" element={<RoulettePage />} />
             <Route path="/leaderboard" element={<LeaderboardPage />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
@@ -168,4 +176,3 @@ function Landing() {
 }
 
 export default App
-// sigma pornocu batuhan
