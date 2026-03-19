@@ -30,13 +30,8 @@ function App() {
 
   return (
     <BrowserRouter>
-      <div className="min-h-dvh" style={{
-  backgroundImage: 'url(/bg-america.png)',
-  backgroundSize: 'cover',
-  backgroundPosition: 'center',
-  backgroundRepeat: 'no-repeat',//sigma selim hepisinizi sevsi
-  minHeight: '100vh'
-}}>
+      <div className="min-h-dvh">
+}
         <header className="sticky top-0 z-20 border-b border-gold/30 bg-black/50 backdrop-blur">
           <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
             <Link
