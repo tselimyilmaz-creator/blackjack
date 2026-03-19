@@ -4,7 +4,7 @@ import { usePlayer } from './hooks/usePlayer'
 import { GamePage } from './pages/GamePage'
 import { LeaderboardPage } from './pages/LeaderboardPage'
 import { RoulettePage } from './pages/RoulettePage'
-import { SlotMachinePage } from './pages/SlotMachinePage.tsx'
+import { SlotMachinePage } from './pages/SlotMachinePage'
 
 function App() {
   const { player } = usePlayer()
@@ -151,6 +151,9 @@ function Landing() {
           </Link>
           <Link to="/game" className="rounded-lg border border-gold/30 px-4 py-2 text-sm font-semibold text-gray-100 hover:bg-white/5">
             Go to table
+          </Link>
+          <Link to="/slots" className="rounded-lg border border-gold/30 px-4 py-2 text-sm font-semibold text-gray-100 hover:bg-white/5">
+            Go to slots
           </Link>
         </div>
       </form>
