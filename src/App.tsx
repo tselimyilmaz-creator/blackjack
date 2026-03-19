@@ -13,7 +13,7 @@ function App() {
   useEffect(() => {
     audioRef.current = new Audio('/casino-music.mp3')
     audioRef.current.loop = true
-    audioRef.current.volume = 0.4
+    audioRef.current.volume = 0.15
     return () => { audioRef.current?.pause() }
   }, [])
 
