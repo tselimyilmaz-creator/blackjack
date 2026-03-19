@@ -104,7 +104,7 @@ export function GamePage() {
   }
 
   const actions = availableActions(round)
-  const canDeal = round.stage === 'betting' && bet >= minBet && bet <= player.balance
+  const canDeal = round.stage === 'betting' && bet >= minBet && bet <= effectiveBalance
   const canSplitNow = actions.canSplit && round.stage === 'player_turn' && player.balance - totalBet >= bet
 
   const startDeal = () => {

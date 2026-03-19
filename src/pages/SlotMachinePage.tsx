@@ -8,18 +8,18 @@ import { ChipStack } from '../ui/ChipStack'
 
 const SYMBOLS = ['🍒', '🍋', '🍊', '🔔', '⭐', '💎']
 const PAYOUTS: Record<string, number> = {
-  '🍒🍒🍒': 50, // 3 cherries
-  '🍋🍋🍋': 20,
-  '🍊🍊🍊': 15,
-  '🔔🔔🔔': 30,
-  '⭐⭐⭐': 40,
-  '💎💎💎': 100,
-  '🍒🍒': 5, // 2 cherries
-  '🍋🍋': 3,
-  '🍊🍊': 2,
-  '🔔🔔': 4,
-  '⭐⭐': 5,
-  '💎💎': 10,
+  '🍒🍒🍒': 500, // 3 cherries
+  '🍋🍋🍋': 300,
+  '🍊🍊🍊': 250,
+  '🔔🔔🔔': 400,
+  '⭐⭐⭐': 600,
+  '💎💎💎': 1000,
+  '🍒🍒': 50, // 2 cherries
+  '🍋🍋': 30,
+  '🍊🍊': 25,
+  '🔔🔔': 40,
+  '⭐⭐': 60,
+  '💎💎': 100,
 }
 
 const MIN_SPIN_MS = 1300
@@ -202,6 +202,19 @@ export function SlotMachinePage() {
             <span className="text-gray-400">chips</span>
           </div>
 
+          <div className="flex gap-2">
+            {[100, 200, 500, 1000, 2000, 4000].map((amount) => (
+              <button
+                key={amount}
+                onClick={() => setBet(amount)}
+                disabled={spinning || amount > balance}
+                className="rounded border border-gold/30 px-2 py-1 text-xs text-gray-200 hover:bg-white/5 disabled:opacity-50"
+              >
+                ${amount}
+              </button>
+            ))}
+          </div>
+
           <button
             onClick={handleSpin}
             disabled={spinning || bet > balance}
@@ -221,14 +234,14 @@ export function SlotMachinePage() {
       <div className="rounded-lg border border-gold/20 bg-black/20 p-4">
         <h2 className="mb-2 font-semibold text-gold">Payouts</h2>
         <div className="grid grid-cols-2 gap-2 text-sm text-gray-300">
-          <div>3 🍒: $50</div>
-          <div>3 💎: $100</div>
-          <div>3 🍋: $20</div>
-          <div>3 ⭐: $40</div>
-          <div>3 🍊: $15</div>
-          <div>3 🔔: $30</div>
-          <div>2 matching: $2-10</div>
-          <div>Any 3 same: $10</div>
+          <div>3 🍒: $500</div>
+          <div>3 💎: $1000</div>
+          <div>3 🍋: $300</div>
+          <div>3 ⭐: $600</div>
+          <div>3 🍊: $250</div>
+          <div>3 🔔: $400</div>
+          <div>2 matching: $25-100</div>
+          <div>Any 3 same: $100</div>
         </div>
       </div>
     </div>
