@@ -81,7 +81,6 @@ export function GamePage() {
     )
   }
 
-  const displayBalance = localBalance ?? player.balance
   const isBroke = round.stage === 'betting' && displayBalance <= 0
   const needsRestart = round.stage === 'betting' && displayBalance > 0 && displayBalance < minBet
 
