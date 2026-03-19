@@ -17,15 +17,10 @@ import {
 import { evaluateHand, isBlackjack } from '../game/hand'
 import { CardView } from '../ui/CardView'
 import { ChipStack } from '../ui/ChipStack'
+import { playSound } from '../useSound'
 
 function clamp(n: number, min: number, max: number) {
   return Math.max(min, Math.min(max, n))
-}
-
-function playSound(src: string) {
-  const audio = new Audio(src)
-  audio.volume = 1.6
-  audio.play().catch(() => {})
 }
 
 export function GamePage() {
@@ -161,8 +156,12 @@ export function GamePage() {
   const finishIfSettled = (next: RoundState) => {
     setRound(next)
     if (next.stage !== 'settled') return
-    const payout = next.hands.reduce((sum, h) => sum + (h.payout ?? 0), 0)
-    const nextBalance = (localBalance ?? player.balance) + payout
+
+    const totalBet = next.hands.reduce((sum, h) => sum + h.bet, 0)
+    const totalPayout = next.hands.reduce((sum, h) => sum + (h.payout ?? 0), 0)
+    const net = totalPayout - totalBet
+
+    const nextBalance = player.balance + net
     setLocalBalance(nextBalance)
     saveRoundResult.mutate(nextBalance)
   }
