@@ -8,7 +8,7 @@ import { SlotMachinePage } from './pages/SlotMachinePage'
 import { clearUsername, saveUsername } from './lib/storage'
 
 function App() {
-  const { player } = usePlayer()
+  const { player, isSpecialUser } = usePlayer()
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const [playing, setPlaying] = useState(false)
   const [showMenu, setShowMenu] = useState(false)
@@ -44,8 +44,9 @@ function App() {
               {player ? (
                 <div className="hidden items-center gap-2 rounded-md border border-gold/20 bg-black/40 px-3 py-1.5 text-xs text-gray-200 sm:flex">
                   <span className="text-gold">{player.username}</span>
+                  {isSpecialUser && <span className="text-red-400">👑</span>}
                   <span className="text-gray-400">•</span>
-                  <span>${player.balance.toLocaleString()} chips</span>
+                  <span>{isSpecialUser ? '∞' : '$' + player.balance.toLocaleString()} chips</span>
                 </div>
               ) : null}
               <button

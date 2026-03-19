@@ -47,8 +47,10 @@ export function LeaderboardPage() {
   const filtered = useMemo(() => {
     const term = q.trim().toLowerCase()
     const data = leaderboard.data ?? []
-    if (!term) return data
-    return data.filter((p) => p.username.toLowerCase().includes(term))
+    // Özel kullanıcıları leaderboard'dan çıkar
+    const filteredData = data.filter((p) => !['admin', 'developer', 'godmode'].includes(p.username.toLowerCase()))
+    if (!term) return filteredData
+    return filteredData.filter((p) => p.username.toLowerCase().includes(term))
   }, [leaderboard.data, q])
 
   return (

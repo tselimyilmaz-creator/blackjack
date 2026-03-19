@@ -48,14 +48,25 @@ export function usePlayer() {
     login.data ??
     undefined) as PlayerRow | undefined
 
+  // Özel kullanıcılar için sınırsız para özelliği
+  const isSpecialUser = player?.username?.toLowerCase() === 'admin' ||
+                       player?.username?.toLowerCase() === 'developer' ||
+                       player?.username?.toLowerCase() === 'godmode'
+
+  const effectivePlayer = player ? {
+    ...player,
+    balance: isSpecialUser ? 999999999 : player.balance // Özel kullanıcılar için sınırsız para
+  } : undefined
+
   return {
     username,
-    player,
+    player: effectivePlayer,
     isLoading: playerQuery.isLoading,
     error: (playerQuery.error ?? login.error) as Error | null,
     login,
     restart,
     refetch: () => playerQuery.refetch(),
+    isSpecialUser,
   }
 }
 
