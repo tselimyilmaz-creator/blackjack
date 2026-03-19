@@ -9,34 +9,20 @@
     --casino-gold: #c9a84c;
   }
 
-  html,
-  body {
+  html, body {
+    height: 100%;
     margin: 0;
-    background-image: url('/bg-america.png');
+  }
+
+  body {
+    background-image: 
+      radial-gradient(1200px 700px at 50% -10%, rgba(74, 14, 26, 0.55), transparent 60%),
+      radial-gradient(900px 600px at 50% 110%, rgba(201, 168, 76, 0.12), transparent 55%),
+      url('/bg-america.png');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     background-attachment: fixed;
-    color: rgb(243 244 246);
-    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto,
-      Helvetica, Arial, 'Apple Color Emoji', 'Segoe UI Emoji';
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
-
-  body {
-    margin: 0;
-    background: radial-gradient(
-        1200px 700px at 50% -10%,
-        rgba(74, 14, 26, 0.55),
-        transparent 60%
-      ),
-      radial-gradient(
-        900px 600px at 50% 110%,
-        rgba(201, 168, 76, 0.12),
-        transparent 55%
-      ),
-      var(--casino-black);
     color: rgb(243 244 246);
     font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto,
       Helvetica, Arial, 'Apple Color Emoji', 'Segoe UI Emoji';
