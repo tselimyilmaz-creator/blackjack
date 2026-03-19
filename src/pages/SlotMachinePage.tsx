@@ -108,7 +108,7 @@ export function SlotMachinePage() {
 
         if (payout > 0) {
           setMessage(`You won $${payout}!`)
-          playSound('win')
+          playSound('/roulette-ball.mp3', 0.7)
         } else {
           setMessage('Try again!')
         }
@@ -148,6 +148,7 @@ export function SlotMachinePage() {
     if (spinning || bet > balance) return
     setSpinning(true)
     setMessage(null)
+    playSound('/card-shuffle.mp3', 0.4)
     startSpinAnimation()
     spinMutation.mutate(bet)
   }
