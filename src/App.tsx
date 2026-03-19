@@ -31,13 +31,9 @@ function App() {
   return (
     <BrowserRouter>
       <div className="min-h-dvh">
-}
         <header className="sticky top-0 z-20 border-b border-gold/30 bg-black/50 backdrop-blur">
           <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
-            <Link
-              to="/"
-              className="font-[Playfair_Display] text-lg font-semibold tracking-wide text-gold"
-            >
+            <Link to="/" className="font-[Playfair_Display] text-lg font-semibold tracking-wide text-gold">
               Luxury Blackjack
             </Link>
             <nav className="flex items-center gap-3 text-sm">
@@ -48,22 +44,13 @@ function App() {
                   <span>${player.balance.toLocaleString()} chips</span>
                 </div>
               ) : null}
-              <Link
-                to="/game"
-                className="rounded-md border border-gold/30 bg-burgundy/40 px-3 py-1.5 text-gray-100 hover:bg-burgundy/60"
-              >
+              <Link to="/game" className="rounded-md border border-gold/30 bg-burgundy/40 px-3 py-1.5 text-gray-100 hover:bg-burgundy/60">
                 Table
               </Link>
-              <Link
-                to="/roulette"
-                className="rounded-md border border-gold/30 px-3 py-1.5 text-gray-100 hover:bg-white/5"
-              >
+              <Link to="/roulette" className="rounded-md border border-gold/30 px-3 py-1.5 text-gray-100 hover:bg-white/5">
                 Roulette
               </Link>
-              <Link
-                to="/leaderboard"
-                className="rounded-md border border-gold/30 px-3 py-1.5 text-gray-100 hover:bg-white/5"
-              >
+              <Link to="/leaderboard" className="rounded-md border border-gold/30 px-3 py-1.5 text-gray-100 hover:bg-white/5">
                 Leaderboard
               </Link>
             </nav>
@@ -114,7 +101,6 @@ function Landing() {
       <p className="mt-2 text-sm text-gray-300">
         No password. Just pick a username and play.
       </p>
-
       <form
         className="mt-6 flex flex-col gap-3"
         onSubmit={(e) => {
@@ -136,20 +122,17 @@ function Landing() {
           inputMode="text"
           maxLength={24}
         />
-
         {error ? (
           <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-2 text-xs text-red-200">
             {error.message}
           </div>
         ) : null}
-
         {player ? (
           <div className="rounded-lg border border-gold/20 bg-black/40 px-4 py-3 text-sm text-gray-200">
             Welcome back, <span className="text-gold">{player.username}</span>.
             Balance: <span className="font-semibold">${player.balance}</span>
           </div>
         ) : null}
-
         <div className="mt-2 flex flex-wrap gap-3">
           <button
             type="submit"
@@ -158,16 +141,10 @@ function Landing() {
           >
             {login.isPending ? 'Entering…' : 'Enter the Table'}
           </button>
-          <Link
-            to="/leaderboard"
-            className="rounded-lg border border-gold/30 px-4 py-2 text-sm font-semibold text-gray-100 hover:bg-white/5"
-          >
+          <Link to="/leaderboard" className="rounded-lg border border-gold/30 px-4 py-2 text-sm font-semibold text-gray-100 hover:bg-white/5">
             View leaderboard
           </Link>
-          <Link
-            to="/game"
-            className="rounded-lg border border-gold/30 px-4 py-2 text-sm font-semibold text-gray-100 hover:bg-white/5"
-          >
+          <Link to="/game" className="rounded-lg border border-gold/30 px-4 py-2 text-sm font-semibold text-gray-100 hover:bg-white/5">
             Go to table
           </Link>
         </div>
