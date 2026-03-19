@@ -35,7 +35,8 @@ export function GamePage() {
   const [round, setRound] = useState<RoundState>(() => newRound())
   const [localBalance, setLocalBalance] = useState<number | null>(null)
 
-  const effectiveBalance = localBalance ?? player?.balance ?? 0
+  const displayBalance = localBalance ?? player?.balance ?? 0
+  const effectiveBalance = displayBalance
 
   // If the server-side balance changes (restart or external update), clear any in-flight local balance so the UI uses the latest value.
   useEffect(() => {
@@ -80,7 +81,11 @@ export function GamePage() {
     )
   }
 
-  if (player.balance <= 0) {
+  const displayBalance = localBalance ?? player.balance
+  const isBroke = round.stage === 'betting' && displayBalance <= 0
+  const needsRestart = round.stage === 'betting' && displayBalance > 0 && displayBalance < minBet
+
+  if (isBroke) {
     return (
       <div className="mx-auto max-w-xl rounded-2xl border border-gold/30 bg-black/40 p-6 shadow-felt">
         <h1 className="font-[Playfair_Display] text-3xl font-semibold text-gold">
@@ -103,14 +108,47 @@ export function GamePage() {
     )
   }
 
+  if (needsRestart) {
+    return (
+      <div className="mx-auto max-w-xl rounded-2xl border border-gold/30 bg-black/40 p-6 shadow-felt">
+        <h1 className="font-[Playfair_Display] text-3xl font-semibold text-gold">
+          Low balance
+        </h1>
+        <p className="mt-2 text-sm text-gray-300">
+          Your balance is below the minimum bet ({minBet}).
+        </p>
+        <button
+          className="mt-6 rounded-lg bg-burgundy px-4 py-2 text-sm font-semibold text-gold shadow-felt hover:brightness-110 disabled:opacity-60"
+          disabled={restart.isPending}
+          onClick={() => restart.mutate(200)}
+        >
+          {restart.isPending ? 'Restarting…' : 'Restart with $200'}
+        </button>
+        <div className="mt-4 text-xs text-gray-400">
+          Or check the <Link className="text-gold underline" to="/leaderboard">leaderboard</Link>.
+        </div>
+      </div>
+    )
+  }
+
   const actions = availableActions(round)
-  const canDeal = round.stage === 'betting' && bet >= minBet && bet <= effectiveBalance
-  const canSplitNow = actions.canSplit && round.stage === 'player_turn' && player.balance - totalBet >= bet
+  const canDeal =
+    round.stage === 'betting' && bet >= minBet && bet <= effectiveBalance
+  const canSplitNow =
+    actions.canSplit &&
+    round.stage === 'player_turn' &&
+    effectiveBalance - totalBet >= bet
+
+  // Ensure bet never exceeds the available balance (e.g. after a restart or balance update)
+  useEffect(() => {
+    const maxBet = Math.max(minBet, effectiveBalance)
+    if (bet > maxBet) setBet(maxBet)
+  }, [effectiveBalance, minBet, bet])
 
   const startDeal = () => {
-    const b = clamp(bet, minBet, player.balance)
+    const b = clamp(bet, minBet, effectiveBalance)
     setBet(b)
-    setLocalBalance(player.balance - b)
+    setLocalBalance(effectiveBalance - b)
     playSound('/card-shuffle.mp3')
     setRound(deal(newRound(), { bet: b }))
   }
@@ -154,7 +192,7 @@ export function GamePage() {
             The Table
           </h1>
           <div className="mt-1 text-sm text-gray-300">
-            Balance: <span className="text-gold">${effectiveBalance}</span>
+            Balance: <span className="text-gold">${displayBalance}</span>
             <span className="mx-2 text-gray-600">•</span>
             Min bet $10
           </div>
