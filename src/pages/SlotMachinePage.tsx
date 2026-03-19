@@ -1,9 +1,10 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Navigate } from 'react-router-dom'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { usePlayer } from '../hooks/usePlayer'
 import { supabase } from '../lib/supabase'
 import { playSound } from '../useSound'
+import { ChipStack } from '../ui/ChipStack'
 
 const SYMBOLS = ['🍒', '🍋', '🍊', '🔔', '⭐', '💎']
 const PAYOUTS: Record<string, number> = {
@@ -20,6 +21,8 @@ const PAYOUTS: Record<string, number> = {
   '⭐⭐': 5,
   '💎💎': 10,
 }
+
+const MIN_SPIN_MS = 1300
 
 function getRandomSymbol(): string {
   return SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)]
@@ -52,7 +55,66 @@ export function SlotMachinePage() {
   const [message, setMessage] = useState<string | null>(null)
   const [localBalance, setLocalBalance] = useState<number | null>(null)
 
+  const spinIntervalRef = useRef<number | null>(null)
+  const spinStartRef = useRef<number | null>(null)
+
+  useEffect(() => {
+    return () => {
+      if (spinIntervalRef.current) window.clearInterval(spinIntervalRef.current)
+    }
+  }, [])
+
+  if (!username) return <Navigate to="/" replace />
+  if (!player) {
+    return (
+      <div className="rounded-2xl border border-gold/30 bg-black/40 p-6 shadow-felt">
+        <div className="text-sm text-gray-300">Loading player…</div>
+      </div>
+    )
+  }
+
   const balance = localBalance ?? player?.balance ?? 0
+
+  const stopSpinAnimation = () => {
+    if (spinIntervalRef.current) {
+      window.clearInterval(spinIntervalRef.current)
+      spinIntervalRef.current = null
+    }
+  }
+
+  const startSpinAnimation = () => {
+    stopSpinAnimation()
+    spinStartRef.current = Date.now()
+    spinIntervalRef.current = window.setInterval(() => {
+      setReels([getRandomSymbol(), getRandomSymbol(), getRandomSymbol()])
+    }, 80)
+  }
+
+  const finishSpin = (finalReels: string[], payout: number, newBalance: number) => {
+    const elapsed = Date.now() - (spinStartRef.current ?? 0)
+    const delay = Math.max(0, MIN_SPIN_MS - elapsed)
+
+    setTimeout(() => {
+      stopSpinAnimation()
+      // Stop reels sequentially for a more realistic feel
+      setReels([finalReels[0], getRandomSymbol(), getRandomSymbol()])
+      setTimeout(() => setReels([finalReels[0], finalReels[1], getRandomSymbol()]), 120)
+      setTimeout(() => setReels(finalReels), 240)
+
+      setTimeout(() => {
+        setLocalBalance(newBalance)
+        qc.invalidateQueries({ queryKey: ['player'] })
+        setSpinning(false)
+
+        if (payout > 0) {
+          setMessage(`You won $${payout}!`)
+          playSound('win')
+        } else {
+          setMessage('Try again!')
+        }
+      }, 260)
+    }, delay)
+  }
 
   const spinMutation = useMutation({
     mutationFn: async (betAmount: number) => {
@@ -71,42 +133,43 @@ export function SlotMachinePage() {
         .single()
 
       if (error) throw error
-      return { reels: newReels, payout, netChange, newBalance: data.balance }
+      return { reels: newReels, payout, newBalance: data.balance }
     },
     onSuccess: ({ reels: newReels, payout, newBalance }) => {
-      setReels(newReels)
-      setLocalBalance(newBalance)
-      qc.invalidateQueries({ queryKey: ['player'] })
-
-      if (payout > 0) {
-        setMessage(`You won $${payout}!`)
-        playSound('win')
-      } else {
-        setMessage('Try again!')
-      }
+      finishSpin(newReels, payout, newBalance)
     },
     onError: (error) => {
       setMessage(error.message)
-    },
-    onSettled: () => {
       setSpinning(false)
-    }
+    },
   })
 
   const handleSpin = () => {
     if (spinning || bet > balance) return
     setSpinning(true)
     setMessage(null)
+    startSpinAnimation()
     spinMutation.mutate(bet)
   }
 
   if (!player) return <Navigate to="/" replace />
 
   return (
-    <div className="mx-auto max-w-2xl">
-      <h1 className="mb-8 font-[Playfair_Display] text-3xl font-semibold text-gold">
-        Slot Machine
-      </h1>
+    <div className="space-y-6">
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <h1 className="font-[Playfair_Display] text-3xl font-semibold text-gold">
+            Slot Machine
+          </h1>
+          <div className="mt-1 text-sm text-gray-300">
+            Balance: <span className="text-gold">${balance.toLocaleString()}</span>
+          </div>
+        </div>
+
+        <div className="hidden sm:block">
+          <ChipStack amount={bet} />
+        </div>
+      </div>
 
       <div className="rounded-2xl border border-gold/30 bg-black/40 p-6 shadow-felt">
         <div className="mb-6 flex justify-center">
@@ -115,7 +178,7 @@ export function SlotMachinePage() {
               <div
                 key={i}
                 className={`flex h-16 w-16 items-center justify-center rounded border text-4xl ${
-                  spinning ? 'animate-spin' : ''
+                  spinning ? 'animate-reel' : ''
                 }`}
               >
                 {symbol}
@@ -124,20 +187,21 @@ export function SlotMachinePage() {
           </div>
         </div>
 
-        <div className="mb-6 flex items-center justify-center gap-4">
-          <label className="text-gray-200">Bet:</label>
-          <input
-            type="number"
-            value={bet}
-            onChange={(e) => setBet(Math.max(1, parseInt(e.target.value) || 1))}
-            className="w-20 rounded border border-gold/30 bg-black/40 px-2 py-1 text-center text-white"
-            min="1"
-            max={balance}
-          />
-          <span className="text-gray-400">chips</span>
-        </div>
+        <div className="mb-6 flex flex-wrap items-center justify-center gap-4">
+          <div className="flex items-center gap-2">
+            <label className="text-gray-200">Bet</label>
+            <input
+              type="number"
+              value={bet}
+              onChange={(e) => setBet(Math.max(1, parseInt(e.target.value) || 1))}
+              className="w-20 rounded border border-gold/30 bg-black/40 px-2 py-1 text-center text-white"
+              min="1"
+              max={balance}
+              disabled={spinning}
+            />
+            <span className="text-gray-400">chips</span>
+          </div>
 
-        <div className="mb-4 text-center">
           <button
             onClick={handleSpin}
             disabled={spinning || bet > balance}
@@ -152,13 +216,9 @@ export function SlotMachinePage() {
             {message}
           </div>
         )}
-
-        <div className="text-center text-gray-400">
-          Balance: ${balance.toLocaleString()}
-        </div>
       </div>
 
-      <div className="mt-8 rounded-lg border border-gold/20 bg-black/20 p-4">
+      <div className="rounded-lg border border-gold/20 bg-black/20 p-4">
         <h2 className="mb-2 font-semibold text-gold">Payouts</h2>
         <div className="grid grid-cols-2 gap-2 text-sm text-gray-300">
           <div>3 🍒: $50</div>

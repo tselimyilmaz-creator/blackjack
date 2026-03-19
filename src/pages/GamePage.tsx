@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link, Navigate } from 'react-router-dom'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { usePlayer } from '../hooks/usePlayer'
@@ -36,6 +36,11 @@ export function GamePage() {
   const [localBalance, setLocalBalance] = useState<number | null>(null)
 
   const effectiveBalance = localBalance ?? player?.balance ?? 0
+
+  // If the server-side balance changes (restart or external update), clear any in-flight local balance so the UI uses the latest value.
+  useEffect(() => {
+    setLocalBalance(null)
+  }, [player?.balance])
 
   const saveRoundResult = useMutation({
     mutationFn: async (nextBalance: number) => {

@@ -5,11 +5,14 @@ import { GamePage } from './pages/GamePage'
 import { LeaderboardPage } from './pages/LeaderboardPage'
 import { RoulettePage } from './pages/RoulettePage'
 import { SlotMachinePage } from './pages/SlotMachinePage'
+import { clearUsername, saveUsername } from './lib/storage'
 
 function App() {
   const { player } = usePlayer()
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const [playing, setPlaying] = useState(false)
+  const [showMenu, setShowMenu] = useState(false)
+  const [newName, setNewName] = useState('')
 
   useEffect(() => {
     audioRef.current = new Audio('/casino-music.mp3')
@@ -45,6 +48,16 @@ function App() {
                   <span>${player.balance.toLocaleString()} chips</span>
                 </div>
               ) : null}
+              <button
+                type="button"
+                onClick={() => {
+                  setNewName(player?.username ?? '')
+                  setShowMenu(true)
+                }}
+                className="rounded-md border border-gold/30 px-3 py-1.5 text-gray-100 hover:bg-white/5"
+              >
+                Menu
+              </button>
               <Link to="/game" className="rounded-md border border-gold/30 bg-burgundy/40 px-3 py-1.5 text-gray-100 hover:bg-burgundy/60">
                 Table
               </Link>
@@ -91,6 +104,64 @@ function App() {
           {playing ? '🔊' : '🔇'}
         </button>
       </div>
+
+      {showMenu ? (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4 py-10">
+          <div className="w-full max-w-md rounded-2xl border border-gold/30 bg-black/80 p-6 shadow-felt">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-gold">Menu</h2>
+              <button
+                type="button"
+                onClick={() => setShowMenu(false)}
+                className="text-gray-300 hover:text-white"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="mt-4 space-y-4">
+              <div>
+                <div className="text-xs font-semibold tracking-wide text-gray-300">Your name</div>
+                <input
+                  value={newName}
+                  onChange={(e) => setNewName(e.target.value)}
+                  className="mt-2 w-full rounded border border-gold/30 bg-black/40 px-3 py-2 text-sm text-white"
+                  placeholder="Enter a name"
+                />
+              </div>
+
+              <button
+                type="button"
+                onClick={() => {
+                  const trimmed = newName.trim()
+                  if (!trimmed) return
+                  saveUsername(trimmed)
+                  window.location.reload()
+                }}
+                className="w-full rounded-lg bg-burgundy px-4 py-2 text-sm font-semibold text-gold shadow-felt hover:brightness-110 disabled:opacity-60"
+                disabled={!newName.trim()}
+              >
+                Save name
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  clearUsername()
+                  window.location.reload()
+                }}
+                className="w-full rounded-lg border border-gold/30 px-4 py-2 text-sm font-semibold text-gray-100 hover:bg-white/5"
+              >
+                Log out
+              </button>
+
+              <div className="text-xs text-gray-400">
+                Change your name or log out to pick a new one.
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </BrowserRouter>
   )
 }
